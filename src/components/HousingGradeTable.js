@@ -10,29 +10,24 @@ import Paper from '@mui/material/Paper';
 
 export default function BasicTable(props) {
   console.log(props);
-  
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 300}} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Grade 1</TableCell>
-            <TableCell align="right">Grade 2</TableCell>
-            <TableCell align="right">Grade 3</TableCell>
-            <TableCell align="right">Grade 4</TableCell>
+            {props.aggregates.map((item, index) => ( // oh no it's back
+              <TableCell>Grade{index+1}</TableCell>
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
           <TableRow
-            key={props.grade1}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
           >
-            <TableCell>{props.grade1}</TableCell>
-            <TableCell align="right">{props.grade2}</TableCell>
-            <TableCell align="right">{props.grade3}</TableCell>
-            <TableCell align="right">{props.grade4}</TableCell>
+            {props.aggregates.map((item, index) => ( // oh no it's back
+              <TableCell>{item}</TableCell>
+            ))}
           </TableRow>
-
         </TableBody>
       </Table>
     </TableContainer>
