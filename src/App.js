@@ -50,7 +50,11 @@ class App extends Component {
       ownershipValues: [],
       quarterValues: [],
       termValues: [],
-      yearValues: []
+      yearValues: [],
+      ownershipSelection: '',
+      quarterSelection: '',
+      termSelection: '',
+      yearSelection: '',
     };
   }
 
@@ -76,6 +80,22 @@ class App extends Component {
     })
   }
 
+  setOwnershipSelection(ownershipSelection) {
+    this.setState({ownershipSelection});
+  }
+
+  setQuarterSelection(quarterSelection) {
+    this.setState({quarterSelection});
+  }
+
+  setTermSelection(termSelection) {
+    this.setState({termSelection});
+  }
+
+  setYearSelection(yearSelection) {
+    this.setState({yearSelection});
+  }
+
   render() {
     return (
       <>
@@ -85,10 +105,10 @@ class App extends Component {
           <HousingGradeTable aggregates = {this.state.aggregateBalanceByGrade}/>
         </div>
         <div sx={{ margin: '20px'}}>
-          <SelectOwnership values = {this.state.ownershipValues} title = 'Ownership'/>
-          <SelectQuarter values = {this.state.quarterValues} title = 'Quarter'/>
-          <SelectTerm values = {this.state.termValues} title = 'Term'/>
-          <SelectYear values = {this.state.yearValues} title = 'Year'/>
+          <SelectOwnership title = 'Ownership' selection = {this.state.ownershipSelection} values = {this.state.ownershipValues} updateSelection = {this.setOwnershipSelection.bind(this)} />
+          <SelectQuarter title = 'Quarter' selection = {this.state.quarterSelection} values = {this.state.quarterValues} updateSelection = {this.setQuarterSelection.bind(this)}/>
+          <SelectTerm title = 'Term' selection = {this.state.termSelection} values = {this.state.termValues} updateSelection = {this.setTermSelection.bind(this)}/>
+          <SelectYear title = 'Year' selection = {this.state.yearSelection} values = {this.state.yearValues} updateSelection = {this.setYearSelection.bind(this)}/>
         </div>
       </div>
       </>
