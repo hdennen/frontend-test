@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -15,7 +15,7 @@ export default function BasicTable(props) {
         <TableHead>
           <TableRow>
             {props.aggregates.map((item, index) => ( // oh no it's back
-              <TableCell>Grade{index+1}</TableCell>
+              <TableCell key={item}>Grade{index+1}</TableCell>
             ))}
           </TableRow>
         </TableHead>
@@ -24,7 +24,7 @@ export default function BasicTable(props) {
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
           >
             {props.aggregates.map((item, index) => ( // oh no it's back
-              <TableCell>{item}</TableCell>
+              <TableCell key={item}>{item}</TableCell>
             ))}
           </TableRow>
         </TableBody>

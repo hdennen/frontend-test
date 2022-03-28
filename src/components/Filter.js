@@ -20,7 +20,7 @@ export default function BasicSelect(props) {
           value={props.selection}
           label="Age"
           onChange={handleChange}
-        >{props.values.map(item => (<MenuItem value={item}>{item}</MenuItem>))}
+        >{props.values.map(item => (<MenuItem value={item} key={item}>{item}</MenuItem>))}
         </Select>
       </FormControl>
     </Box>
