@@ -9,7 +9,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 export default function BasicTable(props) {
-  console.log(props);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 300}} aria-label="simple table">

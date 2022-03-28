@@ -1,64 +1,42 @@
 import React, { Component } from 'react'
 import './App.css'
+import Button from '@mui/material/Button';
 import HousingGradeTable from './components/HousingGradeTable.js'
 import SelectOwnership from './components/Filter.js'
 import SelectQuarter from './components/Filter.js'
 import SelectTerm from './components/Filter.js'
 import SelectYear from './components/Filter.js'
 import { getData } from './request/api.js'
+import { separateData, aggregateBalances, filterBySelection } from './domain/dataFunctions.js'
+import { FIELD_NAMES } from './domain/fields.js'
 
-function separateData(data) {
-  const dataByGrade = [],  
-        ownershipValues = new Set(),
-        quarterValues = new Set(),
-        termValues = new Set(),
-        yearValues = new Set();
-
-  data.forEach(element => { // who's for premature optimization? let's do it in the first pass.
-    if (!element.grade) return;
-
-    ownershipValues.add(element.homeOwnership);
-    quarterValues.add(element.quarter);
-    termValues.add(element.term);
-    yearValues.add(element.year);
-
-    // terrible ideas
-    if (!dataByGrade[parseInt(element.grade)-1]) dataByGrade[parseInt(element.grade)-1] = [];
-    dataByGrade[parseInt(element.grade)-1].push(element);
-  });
-
+function defaultState() {
   return {
-    dataByGrade,
-    ownershipValues: [...ownershipValues],
-    quarterValues: [...quarterValues],
-    termValues: [...termValues],
-    yearValues: [...yearValues]
-  };
-}
-
-function aggregateBalances(dataByGrade) { // make it totally unreadable
-  return dataByGrade.map(grade => grade.reduce((acc, curr) => acc + parseFloat(curr.currentBalance), 0) / grade.length);
+    dataByGrade: [], 
+    filteredDataByGrade: [],
+    aggregateBalanceByGrade: [],
+    ownershipValues: [],
+    quarterValues: [],
+    termValues: [],
+    yearValues: [],
+    ownershipSelection: '',
+    quarterSelection: '',
+    termSelection: '',
+    yearSelection: '',
+  }
 }
 
 class App extends Component { 
   constructor() {
     super();
-    // this state will go in a store so we can reset/recall api
-    this.state = {
-      dataByGrade: [], 
-      aggregateBalanceByGrade: [],
-      ownershipValues: [],
-      quarterValues: [],
-      termValues: [],
-      yearValues: [],
-      ownershipSelection: '',
-      quarterSelection: '',
-      termSelection: '',
-      yearSelection: '',
-    };
+    this.state = defaultState();
   }
 
   componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData() {
     getData().then(result => {
       const { dataByGrade,
               ownershipValues,
@@ -66,8 +44,6 @@ class App extends Component {
               termValues,
               yearValues } = separateData(result),
               aggregateBalanceByGrade = aggregateBalances(dataByGrade);
-
-      console.log(dataByGrade);
 
       this.setState({
         dataByGrade,
@@ -81,19 +57,53 @@ class App extends Component {
   }
 
   setOwnershipSelection(ownershipSelection) {
-    this.setState({ownershipSelection});
+    this.setState({ownershipSelection}); 
+    // heavy handed for now
+    let newSet = filterBySelection(this.state.dataByGrade, ownershipSelection, FIELD_NAMES.OWNERSHIP)
+
+    if (!!this.state.quarterSelection) newSet = filterBySelection(newSet, this.state.quarterSelection, FIELD_NAMES.QUARTER);
+    if (!!this.state.termSelection) newSet = filterBySelection(newSet, this.state.termSelection, FIELD_NAMES.TERM);
+    if (!!this.state.yearSelection) newSet = filterBySelection(newSet, this.state.yearSelection, FIELD_NAMES.YEAR);
+
+    this.setState({aggregateBalanceByGrade: aggregateBalances(newSet)});
   }
 
   setQuarterSelection(quarterSelection) {
     this.setState({quarterSelection});
+    let newSet = filterBySelection(this.state.dataByGrade, quarterSelection, FIELD_NAMES.QUARTER);
+
+    if (!!this.state.ownershipSelection) newSet = filterBySelection(newSet, this.state.ownershipSelection, FIELD_NAMES.OWNERSHIP);
+    if (!!this.state.termSelection) newSet = filterBySelection(newSet, this.state.termSelection, FIELD_NAMES.TERM);
+    if (!!this.state.yearSelection) newSet = filterBySelection(newSet, this.state.yearSelection, FIELD_NAMES.YEAR);
+
+    this.setState({aggregateBalanceByGrade: aggregateBalances(newSet)});
   }
 
   setTermSelection(termSelection) {
     this.setState({termSelection});
+    let newSet = filterBySelection(this.state.dataByGrade, termSelection, FIELD_NAMES.TERM);
+
+    if (!!this.state.ownershipSelection) newSet = filterBySelection(newSet, this.state.ownershipSelection, FIELD_NAMES.OWNERSHIP);
+    if (!!this.state.quarterSelection) newSet = filterBySelection(newSet, this.state.quarterSelection, FIELD_NAMES.QUARTER);
+    if (!!this.state.yearSelection) newSet = filterBySelection(newSet, this.state.yearSelection, FIELD_NAMES.YEAR);
+    
+    this.setState({aggregateBalanceByGrade: aggregateBalances(newSet)});
   }
 
   setYearSelection(yearSelection) {
     this.setState({yearSelection});
+    let newSet = filterBySelection(this.state.dataByGrade, yearSelection, FIELD_NAMES.YEAR);
+
+    if (!!this.state.ownershipSelection) newSet = filterBySelection(newSet, this.state.ownershipSelection, FIELD_NAMES.OWNERSHIP);
+    if (!!this.state.quarterSelection) newSet = filterBySelection(newSet, this.state.quarterSelection, FIELD_NAMES.QUARTER);
+    if (!!this.state.termSelection) newSet = filterBySelection(newSet, this.state.termSelection, FIELD_NAMES.TERM);
+
+    this.setState({aggregateBalanceByGrade: aggregateBalances(newSet)});
+  }
+
+  resetState(){
+    this.setState(defaultState());
+    this.fetchData();
   }
 
   render() {
@@ -110,6 +120,7 @@ class App extends Component {
           <SelectTerm title = 'Term' selection = {this.state.termSelection} values = {this.state.termValues} updateSelection = {this.setTermSelection.bind(this)}/>
           <SelectYear title = 'Year' selection = {this.state.yearSelection} values = {this.state.yearValues} updateSelection = {this.setYearSelection.bind(this)}/>
         </div>
+        <Button variant="contained" onClick={this.resetState.bind(this)}>Reset</Button>
       </div>
       </>
     )
