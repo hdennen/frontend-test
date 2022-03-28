@@ -81,11 +81,15 @@ class App extends Component {
       <>
       <div className="App">
         <p>CHARTS AND GRAPHS</p>
-        <HousingGradeTable aggregates = {this.state.aggregateBalanceByGrade}/>
-        <SelectOwnership values = {this.state.ownershipValues} title = 'Ownership'/>
-        <SelectQuarter values = {this.state.quarterValues} title = 'Quarter'/>
-        <SelectTerm values = {this.state.termValues} title = 'Term'/>
-        <SelectYear values = {this.state.yearValues} title = 'Year'/>
+        <div sx={{ margin: '20px'}}>
+          <HousingGradeTable aggregates = {this.state.aggregateBalanceByGrade}/>
+        </div>
+        <div sx={{ margin: '20px'}}>
+          <SelectOwnership values = {this.state.ownershipValues} title = 'Ownership'/>
+          <SelectQuarter values = {this.state.quarterValues} title = 'Quarter'/>
+          <SelectTerm values = {this.state.termValues} title = 'Term'/>
+          <SelectYear values = {this.state.yearValues} title = 'Year'/>
+        </div>
       </div>
       </>
     )

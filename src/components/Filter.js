@@ -13,8 +13,8 @@ export default function BasicSelect(props) {
   };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
+    <Box sx={{ minWidth: 120, display: 'inline' }}>
+      <FormControl sx={{width: '15%'}}>
         <InputLabel id="demo-simple-select-label">{props.title}</InputLabel>
         <Select
           labelId="demo-simple-select-label"
